@@ -1,19 +1,21 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
+typedef std::vector<float>      MatrixLine;
+typedef std::vector<MatrixLine> MatrixLines;
 
 class Matrix {
 	private:
-		vector<vector<float> > data;
+		MatrixLines data;
+	
+	private:
 		void zeroOut(int rowIndex);
-		vector<float> multiplyRow(float factor, int rowIndex);
-		vector<float> addRows(float factor, int changingRowIndex, int factorRowIndex);
+		MatrixLine multiplyRow(float factor, int rowIndex);
+		MatrixLine addRows(float factor, int changingRowIndex, int factorRowIndex);
 
 	public:
 		void makeOne(int rowIndex);
-		Matrix(vector<vector<float> > );
+		Matrix(const MatrixLines& src);
 		void printMatrix();
 		void rowReduction();
-
 };
