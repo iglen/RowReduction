@@ -1,11 +1,14 @@
 #include "matrix.h"
+#include <algorithm>
 
-Matrix::Matrix(const MatrixLines& src) {
+using namespace std;
+
+Matrix::Matrix(const Rows& src) {
 	data = src;
 }
 
 void Matrix::printMatrix() {
-	for (const MatrixLine& row : data) {
+	for (const Row& row : data) {
 		printf("[");
 		for (float& num : row) {
 			printf("%3.2f ", num);
@@ -24,21 +27,19 @@ void Matrix::rowReduction() {
 }
 
 void Matrix::zeroOut(int rowIndex) {
-	MatrixLine row = data[rowIndex];
-
 	for (int i = 0; i < data.size(); i++) {
 		if (i == rowIndex) {
 			continue;
 		}
 
-		MatrixLine row = data[i];
+		const Row& row = data[i];
 		float factor = 0 - row[rowIndex];
 		data[i] = addRows(factor, i, rowIndex); 		
 	}
 }
 
 void Matrix::makeOne(int rowIndex) {
-	MatrixLine row = data[rowIndex];
+	const Row& row = data[rowIndex];
 	float val = row[rowIndex];
 
 	if (val == 0) {
@@ -48,21 +49,18 @@ void Matrix::makeOne(int rowIndex) {
 	data[rowIndex] = multiplyRow(1 / val, rowIndex);
 }
 
-MatrixLine Matrix::multiplyRow(float factor, int rowIndex) {
-	MatrixLine row = data[rowIndex];
+Row Matrix::multiplyRow(float factor, int rowIndex) {
+	Row row = data[rowIndex];
 
-	for (float& num : row) {
-		num *= factor;
-	}
+	for_each (row.first(), row.last(), [factor](float& num) {num *= factor});
 
 	return row;
 }
 
 MatrixLine Matrix::addRows(float factor, int changingRowIndex, int factorRowIndex) {
-	MatrixLine changingRow = data[changingRowIndex];
-	MatrixLine factorRow = data[factorRowIndex];
-
-	factorRow = multiplyRow(factor, factorRowIndex);
+	Row changingRow = data[changingRowIndex];
+	
+	Row factorRow   = multiplyRow(factor, factorRowIndex);
 	
 	for (int i = 0; i < changingRow.size(); i++) {
 		changingRow[i] += factorRow[i];
