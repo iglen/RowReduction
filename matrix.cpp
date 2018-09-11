@@ -1,11 +1,11 @@
 #include "matrix.h"
 
-Matrix::Matrix(vector<vector<float> > m) {
-	data = m;
+Matrix::Matrix(const MatrixLines& src) {
+	data = src;
 }
 
 void Matrix::printMatrix() {
-	for (vector<float>& row : data) {
+	for (const MatrixLine& row : data) {
 		printf("[");
 		for (float& num : row) {
 			printf("%3.2f ", num);
@@ -24,21 +24,21 @@ void Matrix::rowReduction() {
 }
 
 void Matrix::zeroOut(int rowIndex) {
-	vector<float> row = data[rowIndex];
+	MatrixLine row = data[rowIndex];
 
 	for (int i = 0; i < data.size(); i++) {
 		if (i == rowIndex) {
 			continue;
 		}
 
-		vector<float> row = data[i];
+		MatrixLine row = data[i];
 		float factor = 0 - row[rowIndex];
 		data[i] = addRows(factor, i, rowIndex); 		
 	}
 }
 
 void Matrix::makeOne(int rowIndex) {
-	vector<float> row = data[rowIndex];
+	MatrixLine row = data[rowIndex];
 	float val = row[rowIndex];
 
 	if (val == 0) {
@@ -48,8 +48,8 @@ void Matrix::makeOne(int rowIndex) {
 	data[rowIndex] = multiplyRow(1 / val, rowIndex);
 }
 
-vector<float> Matrix::multiplyRow(float factor, int rowIndex) {
-	vector<float> row = data[rowIndex];
+MatrixLine Matrix::multiplyRow(float factor, int rowIndex) {
+	MatrixLine row = data[rowIndex];
 
 	for (float& num : row) {
 		num *= factor;
@@ -58,9 +58,9 @@ vector<float> Matrix::multiplyRow(float factor, int rowIndex) {
 	return row;
 }
 
-vector<float> Matrix::addRows(float factor, int changingRowIndex, int factorRowIndex) {
-	vector<float> changingRow = data[changingRowIndex];
-	vector<float> factorRow = data[factorRowIndex];
+MatrixLine Matrix::addRows(float factor, int changingRowIndex, int factorRowIndex) {
+	MatrixLine changingRow = data[changingRowIndex];
+	MatrixLine factorRow = data[factorRowIndex];
 
 	factorRow = multiplyRow(factor, factorRowIndex);
 	
